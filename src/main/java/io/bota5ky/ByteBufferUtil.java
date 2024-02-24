@@ -69,27 +69,19 @@ public class ByteBufferUtil {
         }
     }
 
-    /**
-     * 打印所有内容
-     *
-     * @param buffer
-     */
+    // 打印所有内容
     public static void debugAll(ByteBuffer buffer) {
-        int oldlimit = buffer.limit();
+        int oldLimit = buffer.limit();
         buffer.limit(buffer.capacity());
         StringBuilder origin = new StringBuilder(256);
         appendPrettyHexDump(origin, buffer, 0, buffer.capacity());
         System.out.println("+--------+-------------------- all ------------------------+----------------+");
-        System.out.printf("position: [%d], limit: [%d]\n", buffer.position(), oldlimit);
+        System.out.printf("position: [%d], limit: [%d]\n", buffer.position(), oldLimit);
         System.out.println(origin);
-        buffer.limit(oldlimit);
+        buffer.limit(oldLimit);
     }
 
-    /**
-     * 打印可读取内容
-     *
-     * @param buffer
-     */
+    // 打印可读取内容
     public static void debugRead(ByteBuffer buffer) {
         StringBuilder builder = new StringBuilder(256);
         appendPrettyHexDump(builder, buffer, buffer.position(), buffer.limit() - buffer.position());
