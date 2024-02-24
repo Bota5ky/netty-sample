@@ -11,9 +11,9 @@ import java.nio.channels.FileChannel;
  */
 public class ByteBufferTest {
     @Test
-    void should_read_data_from_file_when_use_byte_buffer_given_file_channel() {
+    void should_read_limit_data_from_file_when_use_byte_buffer_given_file_channel() {
         // 获得FileChannel的两种方式
-        // 1. 输入输出流 2. RandomAccessFile
+        // 1.输入输出流 2.RandomAccessFile
         try (FileInputStream fileInputStream = new FileInputStream("src/test/resources/data.txt")) {
             FileChannel channel = fileInputStream.getChannel();
             ByteBuffer buffer = ByteBuffer.allocate(10);
@@ -23,6 +23,25 @@ public class ByteBufferTest {
             while (buffer.hasRemaining()) {
                 byte b = buffer.get();
                 System.out.print((char) b);
+            }
+        } catch (IOException ignored) {
+        }
+    }
+
+    @Test
+    void should_read_all_data_from_file_when_use_byte_buffer_given_file_channel() {
+        try (FileInputStream fileInputStream = new FileInputStream("src/test/resources/data.txt")) {
+            FileChannel channel = fileInputStream.getChannel();
+            ByteBuffer buffer = ByteBuffer.allocate(10);
+            while (channel.read(buffer) != -1) {
+                // 切换至读模式
+                buffer.flip();
+                while (buffer.hasRemaining()) {
+                    byte b = buffer.get();
+                    System.out.print((char) b);
+                }
+                // 清空buffer
+                buffer.clear();
             }
         } catch (IOException ignored) {
         }
