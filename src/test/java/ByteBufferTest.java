@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -124,5 +125,36 @@ public class ByteBufferTest {
         System.out.println(StandardCharsets.UTF_8.decode(buffer2));
         // 在写模式decode会无输出，因为position没有改变，需要flip()
         System.out.println(StandardCharsets.UTF_8.decode(buffer1));
+    }
+
+    @Test
+    void scattering_read() {
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile("src/test/resources/data.txt", "r")) {
+            FileChannel channel = randomAccessFile.getChannel();
+            ByteBuffer b1 = ByteBuffer.allocate(5);
+            ByteBuffer b2 = ByteBuffer.allocate(5);
+            ByteBuffer b3 = ByteBuffer.allocate(3);
+            channel.read(new ByteBuffer[]{b1, b2, b3});
+            b1.flip();
+            b2.flip();
+            b3.flip();
+            debugAll(b1);
+            debugAll(b2);
+            debugAll(b3);
+        } catch (IOException ignored) {
+        }
+    }
+
+    @Test
+    void gathering_write() {
+        ByteBuffer b1 = StandardCharsets.UTF_8.encode("hello");
+        ByteBuffer b2 = StandardCharsets.UTF_8.encode("world");
+        ByteBuffer b3 = StandardCharsets.UTF_8.encode("!");
+
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile("src/test/resources/write.txt", "rw")) {
+            FileChannel channel = randomAccessFile.getChannel();
+            channel.write(new ByteBuffer[]{b1, b2, b3});
+        } catch (IOException ignored) {
+        }
     }
 }
