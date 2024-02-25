@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Bota5ky
  * @since 2024-02-24 20:44
  */
-public class ByteBufferTest {
+class ByteBufferTest {
     @Test
     void read_limit_data() {
         // 获得FileChannel的两种方式
