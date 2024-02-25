@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 
 import static io.bota5ky.ByteBufferUtil.debugAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -102,5 +103,26 @@ public class ByteBufferTest {
         // get(i)不改变position
         System.out.println((char) buffer.get(3));
         debugAll(buffer);
+    }
+
+    @Test
+    void convert_string_to_byte_buffer_and_vice_versa() {
+        // 1.字符串转为ByteBuffer
+        ByteBuffer buffer1 = ByteBuffer.allocate(16);
+        buffer1.put("hello".getBytes());
+        debugAll(buffer1); // 不切换模式
+
+        // 2.指定字符集转换
+        ByteBuffer buffer2 = StandardCharsets.UTF_8.encode("hello");
+        debugAll(buffer2); // 自动切换到读模式
+
+        // 3.wrap
+        ByteBuffer buffer3 = ByteBuffer.wrap("hello".getBytes());
+        debugAll(buffer3); // 和方法2效果一样
+
+        // 返回类型为CharBuffer需要toString()转换
+        System.out.println(StandardCharsets.UTF_8.decode(buffer2));
+        // 在写模式decode会无输出，因为position没有改变，需要flip()
+        System.out.println(StandardCharsets.UTF_8.decode(buffer1));
     }
 }
